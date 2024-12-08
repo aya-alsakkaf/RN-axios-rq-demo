@@ -1,8 +1,24 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getPetById, deletePet } from "../api/pets";
+import { useNavigation } from "@react-navigation/native";
 
 const PetDetails = ({ route }) => {
+  const navigation = useNavigation();
   const { pet } = route.params;
+  const [petDetails, setPetDetails] = useState(pet);
+  useEffect(() => {
+    const fetchPetDetails = async () => {
+      const res = await getPetById(pet.id);
+      setPetDetails(res);
+    };
+    fetchPetDetails();
+  }, []);
+
+  const deletePetHandler = async () => {
+    await deletePet(pet.id);
+    // navigation.navigate("Pets");
+  };
   return (
     <View
       style={{
@@ -14,15 +30,15 @@ const PetDetails = ({ route }) => {
     >
       <Image
         source={{
-          uri: pet.image,
+          uri: petDetails.image,
         }}
         style={{ width: 200, height: 200, marginBottom: 10 }}
       />
       <Text style={{ fontSize: 18, fontWeight: "semibold", marginBottom: 10 }}>
-        Name: {pet.name}
+        Name: {petDetails.name}
       </Text>
       <Text style={{ fontSize: 18, marginBottom: 10, fontWeight: "semibold" }}>
-        Type: {pet.type}
+        Type: {petDetails.type}
       </Text>
       <TouchableOpacity
         style={{
@@ -45,6 +61,10 @@ const PetDetails = ({ route }) => {
           borderRadius: 10,
           width: "90%",
           marginBottom: 10,
+        }}
+        onPress={() => {
+          deletePetHandler();
+          navigation.goBack();
         }}
       >
         <Text style={{ textAlign: "center", fontWeight: "bold" }}>Delete</Text>

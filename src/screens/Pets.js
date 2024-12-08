@@ -1,13 +1,23 @@
 import { SafeAreaView, ScrollView, TextInput } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PetItem from "../components/PetItem";
 import AddPet from "../components/AddPet";
-import pets from "../data/petsData";
+// import pets from "../data/petsData";
+import { getAllPets } from "../api/pets";
 const Pets = () => {
   const [search, setSearch] = useState("");
+  const [pets, setPets] = useState([]);
   const filteredPets = pets
     .filter((pet) => pet.name.toLowerCase().includes(search.toLowerCase()))
     .map((pet) => <PetItem key={pet.id} pet={pet} />);
+
+  useEffect(() => {
+    const fetchPets = async () => {
+      const res = await getAllPets();
+      setPets(res);
+    };
+    fetchPets();
+  }, []);
 
   return (
     <SafeAreaView
