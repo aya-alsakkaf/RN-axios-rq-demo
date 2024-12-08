@@ -1,8 +1,41 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getPetbyId } from "../api/pets";
 
 const PetDetails = ({ route }) => {
   const { pet } = route.params;
+
+  const id = pet.id;
+
+  // console.log("pet", pet);
+
+  const { data: petBE, isLoading } = useQuery({
+    queryKey: ["getOnePet", pet.id],
+    queryFn: () => getPetbyId(pet.id),
+  });
+
+  // console.log("data", petBE);
+
+  if (isLoading)
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "f9e3be",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
   return (
     <View
       style={{
@@ -14,15 +47,17 @@ const PetDetails = ({ route }) => {
     >
       <Image
         source={{
-          uri: pet.image,
+          uri: petBE?.image
+            ? petBE.image
+            : "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png",
         }}
         style={{ width: 200, height: 200, marginBottom: 10 }}
       />
       <Text style={{ fontSize: 18, fontWeight: "semibold", marginBottom: 10 }}>
-        Name: {pet.name}
+        Name: {petBE?.name}
       </Text>
       <Text style={{ fontSize: 18, marginBottom: 10, fontWeight: "semibold" }}>
-        Type: {pet.type}
+        Type: {petBE?.type}
       </Text>
       <TouchableOpacity
         style={{

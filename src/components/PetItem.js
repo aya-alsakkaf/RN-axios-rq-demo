@@ -27,7 +27,9 @@ const PetItem = ({ pet }) => {
         <Text style={{ fontSize: 18, fontWeight: "bold" }}>{pet.name}</Text>
         <Image
           source={{
-            uri: pet.image,
+            uri: pet.image
+              ? pet.image
+              : "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png",
           }}
           style={{ width: 200, height: 200 }}
         />

@@ -1,10 +1,37 @@
-import { View, Text, Modal, TextInput, TouchableOpacity } from "react-native";
-import React, { useContext, useState } from "react";
+import {
+  View,
+  Text,
+  Modal,
+  TextInput,
+  TouchableOpacity,
+  RefreshControl,
+} from "react-native";
+import React, { useCallback, useContext, useState } from "react";
 import ModalContext from "../context/ModalContext";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createPet } from "../api/pets";
 
-const AddPet = () => {
+const AddPet = ({ refetch }) => {
   const { modalVisible, setModalVisible } = useContext(ModalContext);
   const [petInfo, setPetInfo] = useState({});
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationKey: ["createPet"],
+    mutationFn: () => createPet(petInfo),
+    onSuccess: () => {
+      alert("Added Pet!");
+      setModalVisible(false);
+      // queryClient.invalidateQueries({ queryKey: ["fetchPets"] });
+      queryClient.refetchQueries({ queryKey: ["fetchPets"] });
+
+      // queryClient.fetchQuery({ queryKey: ["fetchPets"] });
+      // refetch();
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
   return (
     <Modal visible={modalVisible} animationType="slide" transparent={true}>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -62,7 +89,7 @@ const AddPet = () => {
             }}
             onPress={() => {
               console.log(petInfo);
-              setModalVisible(false);
+              mutate();
             }}
           >
             <Text style={{ fontWeight: "bold" }}>Add Pet</Text>
