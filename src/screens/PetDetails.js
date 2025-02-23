@@ -1,8 +1,19 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getPetById } from "../api/pets";
 
 const PetDetails = ({ route }) => {
-  const { pet } = route.params;
+  const { pet, id } = route.params;
+  const [onePet, setOnePet] = useState({});
+
+  useEffect(() => {
+    const fetchOnePet = async () => {
+      const res = await getPetById(id);
+      setOnePet(res);
+    };
+
+    fetchOnePet();
+  });
   return (
     <View
       style={{
