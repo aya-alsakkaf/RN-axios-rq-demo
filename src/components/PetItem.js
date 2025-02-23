@@ -37,7 +37,7 @@ const PetItem = ({ pet }) => {
             borderRadius: 10,
             padding: 10,
           }}
-          onPress={() => navigation.navigate("PetDetails", { pet })}
+          onPress={() => navigation.navigate("PetDetails", { pet, id: pet.id })}
         >
           <Text>View</Text>
         </TouchableOpacity>
